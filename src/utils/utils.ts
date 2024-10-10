@@ -151,7 +151,3 @@ export function createElement<T extends HTMLElement>(
 	}
 	return element;
 }
-
-export function formatNumber(num: number, sep = ' ') {
-	return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, sep);
-}
