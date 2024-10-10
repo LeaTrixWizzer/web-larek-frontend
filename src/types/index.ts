@@ -1,38 +1,36 @@
 export interface IProduct {
 	id: string;
-	title: string;
 	description: string;
 	image: string;
+	title: string;
 	category: string;
-	price: string;
+	price: number | null;
 }
 
-export type TPayment = 'online' | 'offline';
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
-export interface OrderAddress {
-	payment: TPayment;
+export interface IOrderAddress {
+	payment: string;
 	address: string;
 }
 
-export interface OrderContact {
+export interface IOrderContact {
 	email: string;
 	phone: string;
 }
 
-export interface OrderForm extends OrderAddress, OrderContact {}
+export interface OrderForm extends IOrderAddress, IOrderContact {}
 
-export interface Order extends OrderForm {
-	products: IProduct[];
-	total: string;
+export interface IOrder extends OrderForm {
+	items: string[];
+	total: number;
 }
 
-export interface OrderResult {
+export interface IOrderResult {
 	id: string;
-	total: string;
+	total: number;
 }
 
-export interface IProductAPI {
-	getProductList: () => Promise<IProduct[]>;
-	getProductById: (id: string) => Promise<IProduct>;
-	orderProduct: (order: Order) => Promise<OrderResult[]>;
+export interface IActions {
+	onClick: (event: MouseEvent) => void;
 }
