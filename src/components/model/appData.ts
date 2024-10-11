@@ -25,22 +25,16 @@ export class AppData extends Model<IAppData> {
 		this.emitChanges('items:changed');
 	}
 
-	addProduct(item: IProduct) {
-		this.order.items.push(item.id);
-	}
-
-	removeProduct(item: IProduct) {
-		const index = this.order.items.indexOf(item.id);
-		if (index >= 0) {
-			this.order.items.splice(index, 1);
-		}
-	}
-
 	addToBasket(data: IProduct) {
+		this.order.items.push(data.id);
 		this.basket.push(data);
 	}
 
 	deleteFromBasket(item: IProduct) {
+		const indexOrder = this.order.items.indexOf(item.id);
+		if (indexOrder >= 0) {
+			this.order.items.splice(indexOrder, 1);
+		}
 		const index = this.basket.indexOf(item);
 		if (index >= 0) {
 			this.basket.splice(index, 1);
@@ -102,11 +96,12 @@ export class AppData extends Model<IAppData> {
 	setOrderData(field: keyof IOrderContact, value: string) {
 		this.order[field] = value;
 
-		if (this.validateContacts()) {
-			this.events.emit('order:ready', this.order);
-		}
 		if (this.validateAddress()) {
 			this.events.emit('order:ready', this.order);
+		}
+
+		if (this.validateContacts()) {
+			this.events.emit('contacts:ready', this.order);
 		}
 	}
 

@@ -38,6 +38,22 @@ const order = new OrderAddress(
 );
 const contacts = new OrderContacts(cloneTemplate(contactsTemplate), app);
 
+function renderBasket() {
+	page.counter = appData.basket.length;
+	basket.setDisabled(basket._button, appData.isEmpty);
+	basket.total = appData.getTotalAmount();
+	basket.items = appData.basket.map((item, index) => {
+		const card = new ProductPreview(cloneTemplate(cardBasketTemplate), {
+			onClick: () => app.emit('card:remove', item),
+		});
+		return card.render({
+			title: item.title,
+			price: item.price,
+			index: index + 1,
+		});
+	});
+}
+
 function changedItems() {
 	page.catalog = appData.catalog.map((item) => {
 		const card = new Product(cloneTemplate(cardCatalogTemplate), {
@@ -76,25 +92,12 @@ function selectCard(item: IProduct) {
 }
 
 function addCard(item: IProduct) {
-	appData.addProduct(item);
 	appData.addToBasket(item);
-	page.counter = appData.basket.length;
+	renderBasket();
 	modal.close();
 }
 
 function openBasket() {
-	basket.total = appData.getTotalAmount();
-	basket.setDisabled(basket._button, appData.isEmpty);
-	basket.items = appData.basket.map((item, index) => {
-		const card = new Product(cloneTemplate(cardBasketTemplate), {
-			onClick: () => app.emit('card:remove', item),
-		});
-		return card.render({
-			title: item.title,
-			price: item.price,
-			index: index + 1,
-		});
-	});
 	modal.render({
 		content: basket.render(),
 	});
@@ -102,23 +105,7 @@ function openBasket() {
 
 function removeCard(item: IProduct) {
 	appData.deleteFromBasket(item);
-	appData.removeProduct(item);
-	page.counter = appData.basket.length;
-	basket.setDisabled(basket._button, appData.isEmpty);
-	basket.total = appData.getTotalAmount();
-	basket.items = appData.basket.map((item, index) => {
-		const card = new ProductPreview(cloneTemplate(cardBasketTemplate), {
-			onClick: () => app.emit('card:remove', item),
-		});
-		return card.render({
-			title: item.title,
-			price: item.price,
-			index: index + 1,
-		});
-	});
-	modal.render({
-		content: basket.render(),
-	});
+	renderBasket();
 }
 
 function openOrder() {
@@ -198,17 +185,17 @@ function closeModal() {
 	page.locked = false;
 }
 
-app.on('items:changed', changedItems); // В случае изменений
-app.on('card:select', selectCard); // Показать превью карточки
+app.on('items:changed', changedItems); // Изменилить элементы каталога
+app.on('card:select', selectCard); // Выбрать превью карточки
 app.on('card:add', addCard); // Добавление карточки товара в корзину
 app.on('basket:open', openBasket); // Открытие модального окна корзины
 app.on('card:remove', removeCard); // Удаление карточки товара из корзины
 app.on('order:open', openOrder); // Открытие модального окна формы заказа
 app.on('order:submit', submitOrder); // Открытие модального окна контактов
 app.on('payment:change', changePayment); // Реакция на изменении способа оплаты в форме заказа.
-app.on('formErrors:change', changeFormErrors); // Валидация данных строки "address" и "payment"
+app.on('formErrors:change', changeFormErrors); // Валидация данных строки
 app.on(/^(order(\.payment)?|contacts)\.(.*):change/, trackingChanged); // Отслеживаем изменение одного из полей
-app.on('contacts:submit', submitContacts);
+app.on('contacts:submit', submitContacts); // Открытие модального окна об успешном оформления заказа
 app.on('modal:open', openModal); // Блокировка прокрутки при открытии модального окна
 app.on('modal:close', closeModal); // Снятие блокировки прокрутки при открытии модального окна
 

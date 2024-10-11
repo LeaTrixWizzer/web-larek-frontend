@@ -98,8 +98,6 @@ yarn build
 Методы:
 
 - `setCatalog(items: IProduct[]) {}` - Установить каталог с товарами;
-- `addProduct(item: IProduct)` - Добавить id товара в заказ;
-- `removeProduct(item: IProduct)` — Удалить id товара из заказа;
 - `addToBasket(item: IProduct) {}` — Добавить данные продуктов в корзине;
 - `deleteFromBasket(item: IProduct) {}` — Удалить данные продуктов в корзине;
 - `clearBasket() {}` - Очистить корзину;

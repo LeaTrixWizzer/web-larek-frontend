@@ -14,7 +14,7 @@ export class OrderAddress extends Form<IOrderAddress> {
 		);
 
 		this._buttonAll.forEach((item) => {
-			item.addEventListener('mousedown', () => {
+			item.addEventListener('click', () => {
 				this.payment = item.name;
 				events.emit('payment:change', item);
 			});
